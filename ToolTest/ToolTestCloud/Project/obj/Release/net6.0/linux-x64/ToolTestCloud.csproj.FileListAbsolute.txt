@@ -1,0 +1,13 @@
+C:\UnityProjects\ToolTest\ToolTest\ToolTestCloud\Project\bin\Release\net6.0\linux-x64\ToolTestCloud.deps.json
+C:\UnityProjects\ToolTest\ToolTest\ToolTestCloud\Project\bin\Release\net6.0\linux-x64\ToolTestCloud.dll
+C:\UnityProjects\ToolTest\ToolTest\ToolTestCloud\Project\bin\Release\net6.0\linux-x64\ToolTestCloud.pdb
+C:\UnityProjects\ToolTest\ToolTest\ToolTestCloud\Project\obj\Release\net6.0\linux-x64\ToolTestCloud.csproj.AssemblyReference.cache
+C:\UnityProjects\ToolTest\ToolTest\ToolTestCloud\Project\obj\Release\net6.0\linux-x64\ToolTestCloud.GeneratedMSBuildEditorConfig.editorconfig
+C:\UnityProjects\ToolTest\ToolTest\ToolTestCloud\Project\obj\Release\net6.0\linux-x64\ToolTestCloud.AssemblyInfoInputs.cache
+C:\UnityProjects\ToolTest\ToolTest\ToolTestCloud\Project\obj\Release\net6.0\linux-x64\ToolTestCloud.AssemblyInfo.cs
+C:\UnityProjects\ToolTest\ToolTest\ToolTestCloud\Project\obj\Release\net6.0\linux-x64\ToolTestCloud.csproj.CoreCompileInputs.cache
+C:\UnityProjects\ToolTest\ToolTest\ToolTestCloud\Project\obj\Release\net6.0\linux-x64\ToolTestCloud.sourcelink.json
+C:\UnityProjects\ToolTest\ToolTest\ToolTestCloud\Project\obj\Release\net6.0\linux-x64\ToolTestCloud.dll
+C:\UnityProjects\ToolTest\ToolTest\ToolTestCloud\Project\obj\Release\net6.0\linux-x64\refint\ToolTestCloud.dll
+C:\UnityProjects\ToolTest\ToolTest\ToolTestCloud\Project\obj\Release\net6.0\linux-x64\ToolTestCloud.pdb
+C:\UnityProjects\ToolTest\ToolTest\ToolTestCloud\Project\obj\Release\net6.0\linux-x64\ref\ToolTestCloud.dll
