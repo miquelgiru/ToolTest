@@ -44,6 +44,8 @@ namespace ToolTest
             try
             {
                 await UnityServices.InitializeAsync();
+
+                AuthenticationService.Instance.SignOut();
                 AuthenticationService.Instance.ClearSessionToken();
                 await AuthenticationService.Instance.SignInAnonymouslyAsync();
                 return AuthenticationService.Instance.PlayerId;
@@ -55,15 +57,15 @@ namespace ToolTest
             }
         }
 
-        public async Task<JObject> DeletePlayer(string playerId)
+        public async Task<bool> DeletePlayer(string playerId)
         {
             try
             {
                 string url = string.Format(Endpoints.PLAYER_DELETE, credentials.projectId, playerId);
 
-                string response = await client.Delete(url);
+                bool success = await client.Delete(url);
 
-                return JObject.Parse(response);
+                return success;
             }
             catch (Exception ex)
             {

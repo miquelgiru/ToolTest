@@ -41,8 +41,8 @@ public class PlayersDataManager : MonoBehaviour
     {
         try
         {
-            JObject result = await service.DeletePlayer(playerId);
-            Debug.Log($"Deleted Player {playerId}:\n{result.ToString()}");
+            bool result = await service.DeletePlayer(playerId);
+            Debug.Log($"Deleted Player {playerId}:\n Success: {result.ToString()}");
         }
         catch (System.Exception ex)
         {

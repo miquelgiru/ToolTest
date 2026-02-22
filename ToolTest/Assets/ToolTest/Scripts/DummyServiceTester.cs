@@ -3,6 +3,7 @@ using UnityEngine;
 public class DummyServiceTester : MonoBehaviour
 {
     public PlayersDataManager dataManager;
+    public string PlayerIDToDelete;
 
     [ContextMenu("List Players")]
     void ListPlayers() => dataManager.ListPlayers();
@@ -11,5 +12,5 @@ public class DummyServiceTester : MonoBehaviour
     void CreatePlayer() => dataManager.CreatePlayer();
 
     [ContextMenu("Delete Player")]
-    void DeletePlayer() => dataManager.DeletePlayer("bNqxYgvLEJit7p13wPX5O7l9pAIH");
+    void DeletePlayer() => dataManager.DeletePlayer(PlayerIDToDelete);
 }

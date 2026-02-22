@@ -149,6 +149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dataManager: {fileID: 1079285982}
+  PlayerIDToDelete: tNtBNViQMlDCRe4iM78ZAcPqmdT3
 --- !u!4 &429799508
 Transform:
   m_ObjectHideFlags: 0

@@ -98,7 +98,7 @@ namespace ToolTest
             }
         }
 
-        public async Task<string> Delete(string url)
+        public async Task<bool> Delete(string url)
         {
             try
             {
@@ -109,7 +109,7 @@ namespace ToolTest
                 if (!res.IsSuccessStatusCode)
                     throw new Exception($"DELETE {url} failed: {json}");
 
-                return json;
+                return true;
             }
             catch (Exception ex)
             {
