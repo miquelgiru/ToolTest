@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,11 +39,22 @@ namespace ToolTest
             return req;
         }
 
-        public async Task<string> Get(string url)
+
+        public async Task<string> Get(string url, Dictionary<string, string> headers = null)
         {
             try
             {
                 var req = BuildRequest(HttpMethod.Get, url);
+
+                // Add custom headers if provided
+                if (headers != null) 
+                { 
+                    foreach (var h in headers)
+                    {
+                        req.Headers.TryAddWithoutValidation(h.Key, h.Value); 
+                    } 
+                }
+
                 var res = await http.SendAsync(req);
                 var json = await res.Content.ReadAsStringAsync();
 
@@ -58,11 +70,21 @@ namespace ToolTest
             }
         }
 
-        public async Task<string> Post(string url, string bodyJson)
+        public async Task<string> Post(string url, string body, Dictionary<string, string> headers = null)
         {
             try
             {
-                var req = BuildRequest(HttpMethod.Post, url, bodyJson);
+                var req = BuildRequest(HttpMethod.Post, url, body);
+
+                if (headers == null || !headers.ContainsKey("Content-Type"))
+                    req.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+
+                if (headers != null)
+                {
+                    foreach (var h in headers)
+                        req.Headers.TryAddWithoutValidation(h.Key, h.Value);
+                }
+
                 var res = await http.SendAsync(req);
                 var json = await res.Content.ReadAsStringAsync();
 
@@ -74,26 +96,6 @@ namespace ToolTest
             catch (Exception ex)
             {
                 Debug.LogError($"[WebRequestClient][POST] {ex.Message}");
-                throw;
-            }
-        }
-
-        public async Task<string> Patch(string url, string bodyJson)
-        {
-            try
-            {
-                var req = BuildRequest(HttpMethod.Patch, url, bodyJson);
-                var res = await http.SendAsync(req);
-                var json = await res.Content.ReadAsStringAsync();
-
-                if (!res.IsSuccessStatusCode)
-                    throw new Exception($"PATCH {url} failed: {json}");
-
-                return json;
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[WebRequestClient][PATCH] {ex.Message}");
                 throw;
             }
         }

@@ -1,0 +1,3 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:TextField label="Display Name:" placeholder-text="filler text" name="field-player-item" value="New Player" password="false" class="custom-inputfield__player-item" />
+</ui:UXML>

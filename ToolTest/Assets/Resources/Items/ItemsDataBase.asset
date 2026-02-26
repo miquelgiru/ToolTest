@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f103d8a4dcdeb848984661876817cb9, type: 3}
+  m_Name: ItemsDataBase
+  m_EditorClassIdentifier: 
+  dataBase:
+  - itemName: sling_power_1
+    itemDescription: 'Slingshot Power-Up (Bronze) '
+  - itemName: sling_power_2
+    itemDescription: Slingshot Power-Up (Silver)
+  - itemName: sling_power_3
+    itemDescription: Slingshot Power-Up (Gold)
+  - itemName: extra_bird_1
+    itemDescription: Extra Bird (Single)
+  - itemName: extra_bird_2
+    itemDescription: Extra Bird (Double)
+  - itemName: king_sling
+    itemDescription: 'King Sling (Ultimate Slingshot) '
+  - itemName: tnt_drop
+    itemDescription: TNT Airdrop
