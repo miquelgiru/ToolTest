@@ -129,6 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 225966252}
   - component: {fileID: 225966251}
+  - component: {fileID: 225966253}
   m_Layer: 0
   m_Name: QATool
   m_TagString: Untagged
@@ -170,6 +171,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &225966253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 225966249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5931309b9e293544b9d1db4be65b8fff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dataManager: {fileID: 1079285982}
+  playerFold: {fileID: 9197481963319205126, guid: 9fc2206dfda39a642a405d4075897b39, type: 3}
+  playerInputField: {fileID: 9197481963319205126, guid: 35e63a801017d9044a4874bcbec8d8ac, type: 3}
 --- !u!1 &429799506
 GameObject:
   m_ObjectHideFlags: 0

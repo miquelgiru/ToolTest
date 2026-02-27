@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 
+
+
+#region Get Player
 [System.Serializable]
 public class PlayerDataContent
 {
@@ -31,4 +34,28 @@ public class PlayerDataLinks
 {
     public string next;
 }
+#endregion
 
+
+#region List Players
+[Serializable]
+public class PlayersListContent
+{
+    public List<PlayerContent> results;
+    public PlayerLink links;
+}
+
+[Serializable]
+public class PlayerContent
+{
+    public string id;
+    public Dictionary<string, object> accessClasses;
+}
+
+[Serializable]
+public class PlayerLink
+{
+    public string next;
+}
+
+#endregion

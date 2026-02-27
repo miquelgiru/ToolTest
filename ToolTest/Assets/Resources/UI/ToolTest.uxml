@@ -6,37 +6,38 @@
             <ui:VisualElement name="container-list" focusable="true" style="flex-grow: 1; border-top-left-radius: 12px; border-left-color: rgb(0, 201, 255); border-bottom-left-radius: 12px; border-top-right-radius: 12px; border-bottom-right-radius: 12px; border-left-width: 10px; border-top-width: 10px; border-right-width: 10px; border-bottom-width: 10px; border-top-color: rgb(0, 201, 255); border-right-color: rgb(0, 201, 255); border-bottom-color: rgb(0, 201, 255); margin-top: 30px; padding-left: 0; margin-left: 30px; margin-right: 30px; margin-bottom: 30px; flex-wrap: nowrap; flex-basis: auto; width: 50%;">
                 <ui:Label text="Players" name="lbl-players-tittle" enable-rich-text="true" style="-unity-text-align: upper-center; font-size: 24px; color: rgb(0, 137, 255); -unity-font-style: bold; -unity-font-definition: url(&quot;project://database/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=2230732570650464555&amp;guid=7df79eb057a07ab419b3729202efb4b3&amp;type=3#NotInter-Regular&quot;); margin-bottom: 30px;" />
                 <ui:ScrollView focusable="true" tabindex="1" name="scroll-view-players-list" />
-                <ui:Button text="Modify" style="flex-shrink: 1; margin-left: 4px; width: auto; background-color: rgb(0, 137, 255); -unity-font-style: bold; font-size: 16px;" />
+                <ui:Button text="Modify" name="btn-modify" style="flex-shrink: 1; margin-left: 4px; width: auto; background-color: rgb(0, 137, 255); -unity-font-style: bold; font-size: 16px;" />
+                <ui:Button text="Delete" name="btn-delete" style="flex-shrink: 1; margin-left: 4px; width: auto; background-color: rgb(255, 0, 39); -unity-font-style: bold; font-size: 16px;" />
             </ui:VisualElement>
         </ui:Tab>
-        <ui:Tab label="Create Player" name="create-tab" enabled="true" style="flex-grow: 1; flex-direction: row-reverse; flex-basis: 50%; flex-shrink: 1;">
+        <ui:Tab label="Create Player" name="create-tab" enabled="true" tabindex="1" focusable="true" style="flex-grow: 1; flex-direction: row-reverse; flex-basis: 50%; flex-shrink: 1;">
             <ui:VisualElement name="presets-container" style="flex-grow: 0; background-color: rgba(0, 201, 255, 0.44); width: 30%; min-width: auto;">
                 <ui:Label text="Presets" name="presets-tittle" style="width: 100%; background-color: rgba(255, 255, 255, 0); font-size: 20px; -unity-font-style: bold; -unity-text-align: upper-center;" />
-                <ui:ScrollView style="flex-grow: 1;" />
+                <ui:ScrollView name="scroll-view-presets" style="flex-grow: 1;" />
             </ui:VisualElement>
             <ui:VisualElement name="create-container" style="flex-grow: 1;">
                 <ui:Label text="Create Player" name="create-tittle" style="-unity-text-align: upper-center; font-size: 30px; -unity-font-style: bold; position: absolute; top: 50px; left: 160px;" />
                 <ui:VisualElement name="border-container" style="flex-grow: 1; width: auto; height: auto; flex-basis: auto; -unity-background-image-tint-color: rgb(255, 255, 255); margin-left: 30px; margin-top: 140px; margin-right: 30px; margin-bottom: 70px; background-color: rgba(0, 201, 255, 0.44); border-top-left-radius: 12px; border-top-right-radius: 12px; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; border-left-width: 10px; border-right-width: 10px; border-top-width: 10px; border-bottom-width: 10px; border-left-color: rgba(0, 137, 255, 0.57); border-top-color: rgba(0, 137, 255, 0.57); border-right-color: rgba(0, 137, 255, 0.57); border-bottom-color: rgba(0, 137, 255, 0.57);">
                     <ui:VisualElement style="flex-grow: 1; margin-top: 30px; margin-bottom: 10px; margin-left: 10px; margin-right: 10px; border-left-width: 10px; border-left-color: rgba(0, 137, 255, 0.57); border-top-width: 10px; border-top-color: rgba(0, 137, 255, 0.57); border-right-width: 10px; border-right-color: rgba(0, 137, 255, 0.57); border-bottom-width: 10px; border-bottom-color: rgba(0, 137, 255, 0.57); border-top-left-radius: 12px; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; border-top-right-radius: 12px; padding-top: 10px;">
-                        <ui:Instance template="field-player-item">
+                        <ui:Instance template="field-player-item" name="player-field">
                             <AttributeOverrides element-name="field-player-item" label="Name:" />
                         </ui:Instance>
-                        <ui:Instance template="field-player-item">
+                        <ui:Instance template="field-player-item" name="preset-field">
                             <AttributeOverrides element-name="field-player-item" label="Preset:" />
                         </ui:Instance>
-                        <ui:Instance template="field-player-item">
+                        <ui:Instance template="field-player-item" name="level-field">
                             <AttributeOverrides element-name="field-player-item" label="Level:" />
                         </ui:Instance>
-                        <ui:Instance template="field-player-item">
+                        <ui:Instance template="field-player-item" name="coins-field">
                             <AttributeOverrides element-name="field-player-item" label="Coins:" />
                         </ui:Instance>
-                        <ui:Instance template="field-player-item">
+                        <ui:Instance template="field-player-item" name="abgroup-field">
                             <AttributeOverrides element-name="field-player-item" label="AB Group:" />
                         </ui:Instance>
                         <ui:Label text="Items:" name="lbl-player-items" style="font-size: 20px; -unity-font-style: bold; margin-left: 10px; flex-direction: row-reverse;">
-                            <ui:Button text="Add" style="border-top-left-radius: 12px; border-top-right-radius: 12px; border-bottom-right-radius: 12px; border-bottom-left-radius: 12px; margin-right: 32px; background-color: rgba(0, 137, 255, 0.57); -unity-background-image-tint-color: rgba(0, 201, 255, 0.44);" />
+                            <ui:Button text="Add" name="btn-add-items" style="border-top-left-radius: 12px; border-top-right-radius: 12px; border-bottom-right-radius: 12px; border-bottom-left-radius: 12px; margin-right: 32px; background-color: rgba(0, 137, 255, 0.57); -unity-background-image-tint-color: rgba(0, 201, 255, 0.44);" />
                         </ui:Label>
-                        <ui:Label text="sling_power_3, extra_bird_2, king_sling, tnt_drop,&#10;speed_boost" style="font-size: 14px; -unity-font-style: bold; margin-left: 21px; flex-grow: 0; margin-bottom: -20px; min-height: 132px; margin-top: 16px; flex-direction: row; white-space: pre-wrap;" />
+                        <ui:Label text="sling_power_3, extra_bird_2, king_sling, tnt_drop,&#10;speed_boost" name="lbl-create-items-field" style="font-size: 14px; -unity-font-style: bold; margin-left: 21px; flex-grow: 0; margin-bottom: -20px; min-height: 132px; margin-top: 16px; flex-direction: row; white-space: pre-wrap;" />
                         <ui:Button text="Save" name="btn-save" style="font-size: 16px; -unity-font-style: bold; background-color: rgb(0, 137, 255);" />
                     </ui:VisualElement>
                 </ui:VisualElement>

@@ -69,19 +69,35 @@ namespace ToolTest
             }
         }
 
-        public async Task<JObject> ListPlayersFromCloudSave()
+        public async Task<string[]> ListPlayersFromCloudSave()
         {
             try
             {
-                string url = string.Format(Endpoints.GET_PLAYERS_INFO, credentials.projectId, credentials.environmentId);
+                string url = string.Format(Endpoints.GET_PLAYERS_CLOUD_SAVE, credentials.projectId, credentials.environmentId);
 
                 string response = await client.Get(url);
 
-                return JObject.Parse(response);
+                PlayersListContent list = JsonConvert.DeserializeObject<PlayersListContent>(response);
+
+                if(response != null)
+                {
+                    string[] playersList = new string[list.results.Count];
+                    for(int i = 0; i < list.results.Count; i++)
+                    {
+                        playersList[i] = list.results[i].id;
+                    }
+
+                    return playersList;
+                }
+                else
+                {
+                    Debug.LogError("[ToolTestService][ListPlayersFromCloudSave] Data not valid");
+                    return null;
+                }
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[ToolTestService][ListPlayers] {ex.Message}");
+                Debug.LogError($"[ToolTestService][ListPlayersFromCloudSave] {ex.Message}");
                 throw;
             }
         }
@@ -134,8 +150,8 @@ namespace ToolTest
         {
             try
             {
-                string url = string.Format(Endpoints.PLAYER_DELETE, credentials.projectId, playerId);
-
+                //string url = string.Format(Endpoints.PLAYER_DELETE, credentials.projectId, playerId);
+                string url = $"https://services.api.unity.com/player-authentication/v1/projects/{credentials.projectId}/players/{playerId}?unityEnvironment={credentials.environmentId}";
                 bool success = await client.Delete(url);
 
                 return success;

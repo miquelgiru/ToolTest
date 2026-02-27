@@ -1,10 +1,14 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ToolTest;
+using Unity.Services.Authentication;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PlayersDataManager : MonoBehaviour
 {
@@ -99,7 +103,12 @@ public class PlayersDataManager : MonoBehaviour
         try
         {
             bool result = await service.DeletePlayer(playerId);
-            Debug.Log($"Deleted Player {playerId}:\n Success: {result.ToString()}");
+
+            if (playersInfo.ContainsKey(playerId))
+            {
+                playersInfo.Remove(playerId);
+            }
+            Debug.Log($"Deleted Player {playerId}: Success: {result.ToString()}");
         }
         catch (System.Exception ex)
         {
@@ -107,16 +116,25 @@ public class PlayersDataManager : MonoBehaviour
         }
     }
 
-    public async void GetPlayersInfo()
+    public async Task<string[]> GetPlayersInfo()
     {
         try
         {
-            JObject result = await service.ListPlayersFromCloudSave();
-            Debug.Log($"Players:\n{result.ToString()}");
+            string[] result = await service.ListPlayersFromCloudSave();
+
+            if(result == null)
+            {
+                Debug.LogError($"[PlayersDataManager][GetPlayersInfo] Error retrieving players from cloud save");
+                return null;
+            }
+
+            Debug.Log($"Players found:{result.Length}");
+            return result;
         }
         catch (System.Exception ex)
         {
-            Debug.LogError($"[PlayersDataManager][ListPlayers] {ex.Message}");           
+            Debug.LogError($"[PlayersDataManager][ListPlayers] {ex.Message}");
+            return null;
         }
     }
 
@@ -199,7 +217,19 @@ public class PlayersDataManager : MonoBehaviour
         {
             Debug.LogError($"[PlayersDataManager][SavePlayerData] {ex.Message}");
             return false;
+        }   
+    }
+
+    public async Task<Dictionary<string, PlayerProfile>> GetPlayersProfileData()
+    {
+        string[] palyerIds = await GetPlayersInfo();
+
+        foreach (string playerId in palyerIds)
+        {
+            PlayerProfile playerData = await GetPlayer(playerId);
+            playersInfo[playerId] = playerData;
         }
-        
+
+        return playersInfo;
     }
 }
