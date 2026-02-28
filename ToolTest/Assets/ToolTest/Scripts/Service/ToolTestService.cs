@@ -146,12 +146,28 @@ namespace ToolTest
             }
         }
 
-        public async Task<bool> DeletePlayer(string playerId)
+        public async Task<bool> DeletePlayer(string playerId, bool deleteData = true)
         {
             try
             {
-                //string url = string.Format(Endpoints.PLAYER_DELETE, credentials.projectId, playerId);
-                string url = $"https://services.api.unity.com/player-authentication/v1/projects/{credentials.projectId}/players/{playerId}?unityEnvironment={credentials.environmentId}";
+                bool success = await DeletePlayerCloudSaveData(playerId);
+                string url = string.Format(Endpoints.PLAYER_DELETE, credentials.projectId, playerId);
+                success = await client.Delete(url);
+
+                return success;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[ToolTestService][DeletePlayer] {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task<bool> DeletePlayerCloudSaveData(string playerId)
+        {
+            try
+            {
+                string url = string.Format(Endpoints.DELETE_PLAYER_KEYS, credentials.projectId, credentials.environmentId, playerId);
                 bool success = await client.Delete(url);
 
                 return success;

@@ -76,25 +76,31 @@ public class PlayersDataManager : MonoBehaviour
         }
     }
 
-    public async void CreatePlayer()
+    public async Task<bool> CreatePlayer(Dictionary<string, object> playerData)
     {
         try
         {
-            var data = new Dictionary<string, object> { 
-                { "display_name", "Endgame Whale" },
-                { "preset_name", "QA_Whale" },
-                { "level", "100" },
-                { "coins", "999999" },
-                { "items", new string[]{ "sling_power_3", "extra_bird_2", "king_sling", "tnt_drop", "speed_boost" } },
-                { "ab_group", "variant_b" }
-            };
+            //Mock player data
+            if(playerData == null)
+            {
+                playerData = new Dictionary<string, object> {
+                    { "display_name", "Endgame Whale" },
+                    { "preset_name", "QA_Whale" },
+                    { "level", "100" },
+                    { "coins", "999999" },
+                    { "items", new string[]{ "sling_power_3", "extra_bird_2", "king_sling", "tnt_drop", "speed_boost" } },
+                    { "ab_group", "variant_b" }
+                };
+            }
 
-            string result = await service.CreatePlayer(data);
+            string result = await service.CreatePlayer(playerData);
             Debug.Log($"Created Player:\n{result.ToString()}");
+            return result != null;
         }
         catch (System.Exception ex)
         {
             Debug.LogError($"[PlayersDataManager][CreatePlayer] {ex.Message}");
+            return false;
         }
     }
 

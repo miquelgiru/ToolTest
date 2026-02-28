@@ -6,7 +6,7 @@
             <ui:Label text="level 1" name="lbl-player-level" emoji-fallback-support="true" style="border-bottom-width: 1px; border-bottom-color: rgb(0, 137, 255); padding-left: 10px; border-top-width: 1px; border-top-color: rgb(0, 137, 255); margin-top: 0; margin-bottom: 0;" />
             <ui:Label text="100 coins" name="lbl-player-coins" emoji-fallback-support="true" style="border-bottom-width: 1px; border-bottom-color: rgb(0, 137, 255); padding-left: 10px; border-top-width: 1px; border-top-color: rgb(0, 137, 255); margin-top: 0; margin-bottom: 0;" />
             <ui:Label text="control" name="lbl-player-group" emoji-fallback-support="true" style="border-bottom-width: 1px; border-bottom-color: rgb(0, 137, 255); padding-left: 10px; border-top-width: 1px; border-top-color: rgb(0, 137, 255); margin-top: 0; margin-bottom: 0;" />
-            <ui:Label text="sling_power_3, extra_bird_2&quot;, king_sling, tnt_drop,&#10;speed_boost" name="lbl-player-items" emoji-fallback-support="true" style="border-bottom-width: 0; border-bottom-color: rgb(0, 137, 255); padding-left: 10px; border-top-width: 1px; border-top-color: rgb(0, 137, 255); margin-top: 0; margin-bottom: 0;" />
+            <ui:Label name="lbl-player-items" emoji-fallback-support="true" style="border-bottom-width: 0; border-bottom-color: rgb(0, 137, 255); padding-left: 10px; border-top-width: 1px; border-top-color: rgb(0, 137, 255); margin-top: 0; margin-bottom: 0;" />
         </ui:VisualElement>
     </ui:Foldout>
 </ui:UXML>

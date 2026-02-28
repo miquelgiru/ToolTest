@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class DummyServiceTester : MonoBehaviour
@@ -22,7 +23,19 @@ public class DummyServiceTester : MonoBehaviour
     }
 
     [ContextMenu("Create Player")]
-    void CreatePlayer() => dataManager.CreatePlayer();
+    void CreatePlayer()
+    {
+        var playerData = new Dictionary<string, object> {
+            { "display_name", PlayerMockData.DisplayName },
+            { "preset_name", PlayerMockData.PresetName },
+            { "level", PlayerMockData.Level },
+            { "coins", PlayerMockData.Coins },
+            { "items", PlayerMockData.Items },
+            { "ab_group", PlayerMockData.ABGroup }
+        };
+
+        dataManager.CreatePlayer(playerData);
+    }
 
     [ContextMenu("Delete Player")]
     void DeletePlayer() => dataManager.DeletePlayer(PlayerId);

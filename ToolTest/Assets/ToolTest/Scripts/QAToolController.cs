@@ -25,6 +25,8 @@ public class QAToolController : MonoBehaviour
     private Tab createTab;
     private Button saveButton;
     private Button addItemButton;
+    private ScrollView addItemsScrollView;
+    private Button closeItemsPanel;
     private ScrollView presetView;
     private ScrollView presetsScrollView;
 
@@ -40,6 +42,7 @@ public class QAToolController : MonoBehaviour
 
     private Dictionary<string, PlayerProfile> playersStoredData;
     private Dictionary<string, Foldout> playersFoldouts;
+    private Dictionary<string, Button> itemButtonSelectors;
     private string currentPlayerSelected = null;
 
     [Header("UI Templates")]
@@ -61,6 +64,8 @@ public class QAToolController : MonoBehaviour
         createTab = document.rootVisualElement.Q("create-tab") as Tab;
         saveButton = document.rootVisualElement.Q("btn-save") as Button;
         addItemButton = document.rootVisualElement.Q("btn-add-items") as Button;
+        addItemsScrollView = document.rootVisualElement.Q("scroll-items-selector") as ScrollView;
+        closeItemsPanel = document.rootVisualElement.Q("bt-close-items-selector") as Button;
         presetView = document.rootVisualElement.Q("scroll-view-presets") as ScrollView;
         presetsScrollView = document.rootVisualElement.Q("scroll-view-presets") as ScrollView;
 
@@ -73,6 +78,7 @@ public class QAToolController : MonoBehaviour
 
         playersStoredData = new Dictionary<string, PlayerProfile>();
         playersFoldouts = new Dictionary<string, Foldout>();
+        itemButtonSelectors = new Dictionary<string, Button>();
     }
 
     private void Start()
@@ -80,17 +86,8 @@ public class QAToolController : MonoBehaviour
         SubscribeToEvents();
         EnablePlayerModify(false);
         CreatePresetButtons();
+        CreateItemsButtonsSelector();
         LoadPlayersList();
-    }
-
-    private void SetPlayerData(VisualElement element, PlayerProfile data)
-    {
-        element.Q<Label>("preset_name").text = data.PresetName;
-        element.Q<Label>("display_name").text = data.DisplayName;
-        element.Q<Label>("level").text = data.Level.ToString();
-        element.Q<Label>("coins").text = data.Coins.ToString();
-        element.Q<Label>("items").text = data.Items.ToString();
-        element.Q<Label>("ab_group").text = data.ABGroup;
     }
 
     private void SubscribeToEvents()
@@ -98,14 +95,23 @@ public class QAToolController : MonoBehaviour
         modifyPlayer.RegisterCallback<ClickEvent>(OnModifyPlayer);
         deletePlayer.RegisterCallback<ClickEvent>(OnDeletePlayer);
         saveButton.RegisterCallback<ClickEvent>(OnSavePlayer);
-        tabView.RegisterCallback<ClickEvent>(OnCreatePlayerTab);
+        tabView.RegisterCallback<ChangeEvent<int>>(OnCreatePlayerTab);
+        addItemButton.RegisterCallback<ClickEvent>(OnAddItem);
+        closeItemsPanel.RegisterCallback<ClickEvent>(OnCloseItem);
+    }
+
+    private void OnCloseItem(ClickEvent evt)
+    {
+        addItemsScrollView.parent.visible = false;
+    }
+
+    private void OnAddItem(ClickEvent evt)
+    {
+        addItemsScrollView.parent.visible = true;
     }
 
     private async Task LoadPlayersList()
     {
-        playersStoredData.Clear();
-        playersFoldouts.Clear();
-
         playersStoredData = await dataManager.GetPlayersProfileData();
 
         foreach (string playerId in playersStoredData.Keys)
@@ -120,9 +126,15 @@ public class QAToolController : MonoBehaviour
             foldout.Q<Label>("lbl-player-group").text = playersStoredData[playerId].ABGroup;
 
             Label lblItems = foldout.Q<Label>("lbl-player-items") as Label;
-            foreach(string item in playersStoredData[playerId].Items)
+            for (int i = 0; i < playersStoredData[playerId].Items.Length; i++)
             {
-                lblItems.text += (item + ", ");
+                string item = playersStoredData[playerId].Items[i];
+                lblItems.text += item;
+
+                if(i < playersStoredData[playerId].Items.Length - 1)
+                {
+                    lblItems.text += '-';
+                }
             }
 
             foldout.value = false;
@@ -140,7 +152,13 @@ public class QAToolController : MonoBehaviour
 
     private void ReloadPlayersList()
     {
+        foreach (Foldout fd in playersFoldouts.Values)
+        {
+            listView.Remove(fd);
+        }
         listView.Clear();
+        playersStoredData.Clear();
+        playersFoldouts.Clear();
         LoadPlayersList();
     }
 
@@ -155,9 +173,15 @@ public class QAToolController : MonoBehaviour
             abgroupContainer.Q<TextField>("field-player-item").value = profile.ABGroup;
 
             itemsPanel.text = string.Empty;
-            foreach (string item in profile.Items)
+            for (int i = 0; i < profile.Items.Length; i++)
             {
-                itemsPanel.text += (item + ", ");
+                string item = profile.Items[i];
+                itemsPanel.text += (item);
+
+                if (i < profile.Items.Length - 1)
+                {
+                    itemsPanel.text += '-';
+                }
             }
         }
     }
@@ -176,6 +200,28 @@ public class QAToolController : MonoBehaviour
         }
     }
 
+    private void CreateItemsButtonsSelector()
+    {
+        ItemsDataBase db = Resources.Load<ItemsDataBase>("Items/ItemsDataBase");
+
+        foreach(ItemDataBase item in db.dataBase)
+        {
+            Button btn = new Button();
+            btn.text = item.itemName;
+            itemButtonSelectors.Add(item.itemName, btn);
+            addItemsScrollView.Add(btn);
+            btn.RegisterCallback<ClickEvent>((ev) => 
+            {
+                if (itemsPanel.text != string.Empty)
+                {
+                    itemsPanel.text += '-';
+                }
+                itemsPanel.text += btn.text;
+                addItemsScrollView.parent.visible = false;
+            });
+        }
+    }
+
     #region Callbacks
     private void OnModifyPlayer(ClickEvent evt)
     {
@@ -184,7 +230,7 @@ public class QAToolController : MonoBehaviour
             presetsScrollView.parent.visible = false;
             tabView.selectedTabIndex = createTab.tabIndex;
             UpdateCreatePanel(playersStoredData[currentPlayerSelected]);
-            currentPlayerSelected = null;
+            //currentPlayerSelected = null;
         }
     }
 
@@ -193,6 +239,7 @@ public class QAToolController : MonoBehaviour
         if (!string.IsNullOrEmpty(currentPlayerSelected))
         {
             dataManager.DeletePlayer(currentPlayerSelected);
+            currentPlayerSelected = null;
             ReloadPlayersList();
         }
     }
@@ -217,24 +264,50 @@ public class QAToolController : MonoBehaviour
         EnablePlayerModify(!clickedFoldout.value);
     }
 
-    private void OnCreatePlayerTab(ClickEvent evt)
+    private void OnCreatePlayerTab(ChangeEvent<int> evt)
     {
         if(tabView.selectedTabIndex != createTab.tabIndex)
         {
+            CleanCreatePanel();
             presetsScrollView.parent.visible = true;
+            currentPlayerSelected = null;
         }
     }
 
     private async void OnSavePlayer(ClickEvent evt)
     {
-        await dataManager.SavePlayerData(currentPlayerSelected, GetDataToSave());
-        await LoadPlayersList();
-        tabView.selectedTabIndex = listTab.tabIndex;
+        bool success = false;
+        if (currentPlayerSelected == null)
+        {
+            PlayerProfile profile = GetDataToSave();
+
+            var data = new Dictionary<string, object> {
+                    { "display_name", profile.DisplayName },
+                    { "preset_name", profile.PresetName },
+                    { "level", profile.Level },
+                    { "coins", profile.Coins },
+                    { "items", profile.Items },
+                    { "ab_group", profile.ABGroup }
+                };
+
+            await dataManager.CreatePlayer(data);
+            success = true;
+        }
+        else
+        {
+             success = await dataManager.SavePlayerData(currentPlayerSelected, GetDataToSave());         
+        }
+
+        if (success)
+        {
+            ReloadPlayersList();
+            tabView.selectedTabIndex = listTab.tabIndex;
+            currentPlayerSelected = null;
+        }
     }
 
+    #endregion
 
-    #endregion    
-    
     private PlayerProfile GetDataToSave()
     {
         PlayerProfile profile = new PlayerProfile();
@@ -250,8 +323,17 @@ public class QAToolController : MonoBehaviour
 
     private string[] ConvertRawItemsData(string items)
     {
-        List<string> ret = itemsPanel.text.Split(", ", System.StringSplitOptions.RemoveEmptyEntries).ToList();
-        ret.RemoveAt(ret.Count - 1);
+        List<string> ret = itemsPanel.text.Split("-", System.StringSplitOptions.RemoveEmptyEntries).ToList();
         return ret.ToArray();
+    }
+
+    private void CleanCreatePanel()
+    {
+        presetContainer.Q<TextField>("field-player-item").value = string.Empty;
+        nameContainer.Q<TextField>("field-player-item").value = string.Empty;
+        levelContainer.Q<TextField>("field-player-item").value = string.Empty;
+        coinsContainer.Q<TextField>("field-player-item").value = string.Empty;
+        abgroupContainer.Q<TextField>("field-player-item").value = string.Empty;
+        itemsPanel.text = string.Empty;
     }
 }
