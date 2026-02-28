@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using ToolTest;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -83,6 +84,9 @@ public class QAToolController : MonoBehaviour
 
     private void Start()
     {
+        ToolTestService service = new ToolTestService();
+        dataManager.Initialize(service);
+
         SubscribeToEvents();
         EnablePlayerModify(false);
         CreatePresetButtons();
@@ -240,6 +244,7 @@ public class QAToolController : MonoBehaviour
         {
             dataManager.DeletePlayer(currentPlayerSelected);
             currentPlayerSelected = null;
+            EnablePlayerModify(false);
             ReloadPlayersList();
         }
     }

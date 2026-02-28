@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace ToolTest
 {
-    public class ToolTestService
+    public class ToolTestService : IToolTestService
     {
         private readonly WebRequestClient client;
         private readonly AccountCredentials credentials;

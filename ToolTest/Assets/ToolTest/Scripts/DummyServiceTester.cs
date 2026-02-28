@@ -10,9 +10,6 @@ public class DummyServiceTester : MonoBehaviour
     [Space(20), Header("Mock Player Data")]
     public PlayerProfile PlayerMockData;
 
-    [ContextMenu("List Players")]
-    void ListPlayers() => dataManager.ListPlayers();
-
     [ContextMenu("Get Player")]
     async void GetPlayer()
     {

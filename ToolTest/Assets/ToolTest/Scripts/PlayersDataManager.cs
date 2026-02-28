@@ -12,177 +12,112 @@ using UnityEngine.UIElements;
 
 public class PlayersDataManager : MonoBehaviour
 {
-    private ToolTestService service;
-    private Dictionary<string, PlayerProfile> playersInfo = new Dictionary<string, PlayerProfile>();
+    private IToolTestService service;
+    private readonly Dictionary<string, PlayerProfile> playersInfo = new();
+
+    public void Initialize(IToolTestService injectedService)
+    {
+        service = injectedService;
+    }
 
     private void Awake()
     {
-        service = new ToolTestService();
-    }
-
-    public async Task<PlayersListInfo> ListPlayers()
-    {
-        try
-        {
-            JObject result = await service.ListPlayers();
-            Debug.Log($"Players:{result.ToString()}");
-
-            return null;
-        }
-        catch (System.Exception ex)
-        {
-            Debug.LogError($"[ToolTestBehaviour][ListPlayers] {ex.Message}");
-            return null;
-        }
+        if (service == null)
+            service = new ToolTestService();
     }
 
     public async Task<PlayerProfile> GetPlayer(string playerID)
     {
-        try
-        {
-            if (playersInfo.ContainsKey(playerID))
-            {
-                return playersInfo[playerID];
-            }
+        if (playersInfo.TryGetValue(playerID, out var cached))
+            return cached;
 
-            JObject result = await service.GetPlayer(playerID);
+        JObject result = await service.GetPlayer(playerID);
+        if (result == null) return null;
 
-            if (result != null)
-            {
-                var resultData = result.ToObject<PlayerDataContent>();
-                PlayerProfile info = ConvertPlayerDataIntoPlayerInfo(resultData.results);
+        var resultData = result.ToObject<PlayerDataContent>();
+        var info = ConvertRawDataIntoPlayerProfile(resultData.results);
 
-                if (info != null)
-                {
-                    playersInfo.Add(playerID, info);
-                    return info;
-                }
-                else
-                {
-                    Debug.LogError($"[PlayersDataManager][GetPlayer] Error parsing player data");
-                    return null;
-                }
-            }
-            else
-            {
-                Debug.LogError($"[PlayersDataManager][GetPlayer] Response empty");
-                return null;
-            }
-        }
-        catch (System.Exception ex)
-        {
-            Debug.LogError($"[PlayersDataManager][GetPlayer] {ex.Message}");
-            return null;
-        }
+        if (info != null)
+            playersInfo[playerID] = info;
+
+        return info;
     }
 
     public async Task<bool> CreatePlayer(Dictionary<string, object> playerData)
     {
-        try
-        {
-            //Mock player data
-            if(playerData == null)
-            {
-                playerData = new Dictionary<string, object> {
-                    { "display_name", "Endgame Whale" },
-                    { "preset_name", "QA_Whale" },
-                    { "level", "100" },
-                    { "coins", "999999" },
-                    { "items", new string[]{ "sling_power_3", "extra_bird_2", "king_sling", "tnt_drop", "speed_boost" } },
-                    { "ab_group", "variant_b" }
-                };
-            }
-
-            string result = await service.CreatePlayer(playerData);
-            Debug.Log($"Created Player:\n{result.ToString()}");
-            return result != null;
-        }
-        catch (System.Exception ex)
-        {
-            Debug.LogError($"[PlayersDataManager][CreatePlayer] {ex.Message}");
-            return false;
-        }
+        string result = await service.CreatePlayer(playerData);
+        return !string.IsNullOrEmpty(result);
     }
 
-    public async void DeletePlayer(string playerId)
+    public async Task<bool> DeletePlayer(string playerId)
     {
-        try
-        {
-            bool result = await service.DeletePlayer(playerId);
+        bool result = await service.DeletePlayer(playerId);
 
-            if (playersInfo.ContainsKey(playerId))
-            {
-                playersInfo.Remove(playerId);
-            }
-            Debug.Log($"Deleted Player {playerId}: Success: {result.ToString()}");
-        }
-        catch (System.Exception ex)
-        {
-            Debug.LogError($"[PlayersDataManager][DeletePlayer] {ex.Message}");
-        }
+        if (result)
+            playersInfo.Remove(playerId);
+
+        return result;
     }
 
     public async Task<string[]> GetPlayersInfo()
     {
-        try
-        {
-            string[] result = await service.ListPlayersFromCloudSave();
+        var result = await service.ListPlayersFromCloudSave();
 
-            if(result == null)
-            {
-                Debug.LogError($"[PlayersDataManager][GetPlayersInfo] Error retrieving players from cloud save");
-                return null;
-            }
-
-            Debug.Log($"Players found:{result.Length}");
-            return result;
-        }
-        catch (System.Exception ex)
+        if (result == null || result.Length == 0)
         {
-            Debug.LogError($"[PlayersDataManager][ListPlayers] {ex.Message}");
-            return null;
+            Debug.LogWarning("[PlayersDataManager][GetPlayersInfo] No players found in Cloud Save");
+            return new string[0];
         }
+
+        return result;
     }
 
-    private PlayerProfile ConvertPlayerDataIntoPlayerInfo(List<PlayerDataItem> data)
+    private PlayerProfile ConvertRawDataIntoPlayerProfile(List<PlayerDataItem> data)
     {
-        PlayerProfile playerInfo = new PlayerProfile();
+        var playerInfo = new PlayerProfile();
 
-        foreach (PlayerDataItem item in data)
+        foreach (var item in data)
         {
-            if (item.key.Equals("preset_name"))
+            switch (item.key)
             {
-                playerInfo.PresetName = item.value as string;
-            }
-            else if (item.key.Equals("display_name"))
-            {
-                playerInfo.DisplayName = item.value as string;
-            }
-            else if (item.key.Equals("level"))
-            {
-                playerInfo.Level = Convert.ToInt32(item.value);
-            }
-            else if (item.key.Equals("coins"))
-            {
-                playerInfo.Coins = Convert.ToInt32(item.value);
-            }
-            else if (item.key.Equals("ab_group"))
-            {
-                playerInfo.ABGroup = item.value as string;
-            }
-            else if (item.key.Equals("items"))
-            {
-                string rawItemsData = item.value.ToString();
-                string[] parsedItems = JsonConvert.DeserializeObject<string[]>(rawItemsData);
-
-                if(parsedItems != null)
-                {
-                    playerInfo.Items = parsedItems;
-                }
-                else
-                {
-                    Debug.LogError("[PlayersDataManager][ConvertPlayerDataIntoPlayerInfo] Error obtaining items list");
-                }
+                case "preset_name":
+                    playerInfo.PresetName = item.value as string;
+                    break;
+                case "display_name":
+                    playerInfo.DisplayName = item.value as string;
+                    break;
+                case "level":
+                    if (int.TryParse(item.value.ToString(), out int level))
+                        playerInfo.Level = level;
+                    else
+                        Debug.LogError($"[PlayersDataManager] Invalid level value: {item.value}");
+                    break;
+                case "coins":
+                    if (int.TryParse(item.value.ToString(), out int coins))
+                        playerInfo.Coins = coins;
+                    else
+                        Debug.LogError($"[PlayersDataManager] Invalid coins value: {item.value}");
+                    break;
+                case "ab_group":
+                    playerInfo.ABGroup = item.value as string;
+                    break;
+                case "items":
+                    try
+                    {
+                        string[] parsedItems = JsonConvert.DeserializeObject<string[]>(item.value.ToString());
+                        if (parsedItems != null)
+                            playerInfo.Items = parsedItems;
+                        else
+                            Debug.LogError("[PlayersDataManager] Items list is null or invalid");
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogError($"[PlayersDataManager] Exception parsing items: {ex.Message}");
+                    }
+                    break;
+                default:
+                    Debug.LogWarning($"[PlayersDataManager] Unknown key in player data: {item.key}");
+                    break;
             }
         }
 
@@ -191,39 +126,25 @@ public class PlayersDataManager : MonoBehaviour
 
     public async Task<bool> SavePlayerData(string playerId, PlayerProfile playerInfo)
     {
-        try
+        var savedData = new Dictionary<string, object>
         {
-            var savedData = new Dictionary<string, object>
-            {
-                { "preset_name", playerInfo.PresetName },
-                { "display_name", playerInfo.DisplayName },
-                { "level", playerInfo.Level },
-                { "coins", playerInfo.Coins },
-                { "ab_group", playerInfo.ABGroup },
-                { "items", playerInfo.Items },
-            };
+            { "preset_name", playerInfo.PresetName },
+            { "display_name", playerInfo.DisplayName },
+            { "level", playerInfo.Level },
+            { "coins", playerInfo.Coins },
+            { "ab_group", playerInfo.ABGroup },
+            { "items", playerInfo.Items },
+        };
 
-            string error = string.Empty;
-            if(!PlayerDataValidator.ValidateDictionary(savedData,out error))
-            {
-                Debug.LogError($"[PlayersDataManager][SavePlayerData] Invalid data: {error}");
-                return false;
-            }
-
-            bool result = await service.SavePlayerData(playerId, savedData);
-
-            if (result)
-            {
-                playersInfo.Remove(playerId);
-            }
-
-            return result;
-        }
-        catch(System.Exception ex)
-        {
-            Debug.LogError($"[PlayersDataManager][SavePlayerData] {ex.Message}");
+        if (!PlayerDataValidator.ValidateDictionary(savedData, out _))
             return false;
-        }   
+
+        bool result = await service.SavePlayerData(playerId, savedData);
+
+        if (result)
+            playersInfo.Remove(playerId);
+
+        return result;
     }
 
     public async Task<Dictionary<string, PlayerProfile>> GetPlayersProfileData()
@@ -238,4 +159,7 @@ public class PlayersDataManager : MonoBehaviour
 
         return playersInfo;
     }
+
+    // For testing visibility (read-only)
+    public bool IsCached(string playerId) => playersInfo.ContainsKey(playerId);
 }
