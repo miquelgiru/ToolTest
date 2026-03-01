@@ -110,7 +110,7 @@ public static class PlayerDataValidator
         return false;
     }
 
-    public static bool ValidateDictionary(Dictionary<string, object> playerData, out string error)
+    public static bool ValidatePlayerData(Dictionary<string, object> playerData, out string error)
     {
         foreach (var item in playerData)
         {

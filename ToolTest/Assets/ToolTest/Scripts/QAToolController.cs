@@ -99,21 +99,13 @@ public class QAToolController : MonoBehaviour
         modifyPlayer.RegisterCallback<ClickEvent>(OnModifyPlayer);
         deletePlayer.RegisterCallback<ClickEvent>(OnDeletePlayer);
         saveButton.RegisterCallback<ClickEvent>(OnSavePlayer);
-        tabView.RegisterCallback<ChangeEvent<int>>(OnCreatePlayerTab);
-        addItemButton.RegisterCallback<ClickEvent>(OnAddItem);
-        closeItemsPanel.RegisterCallback<ClickEvent>(OnCloseItem);
+        //tabView.RegisterCallback<ChangeEvent<int>>(OnCreatePlayerTab);
+        tabView.activeTabChanged += OnActiveTabChanged;
+        addItemButton.RegisterCallback<ClickEvent>(OnAddItemButton);
+        closeItemsPanel.RegisterCallback<ClickEvent>(OnCloseItemButton);
     }
 
-    private void OnCloseItem(ClickEvent evt)
-    {
-        addItemsScrollView.parent.visible = false;
-    }
-
-    private void OnAddItem(ClickEvent evt)
-    {
-        addItemsScrollView.parent.visible = true;
-    }
-
+    #region Players List Tab
     private async Task LoadPlayersList()
     {
         playersStoredData = await dataManager.GetPlayersProfileData();
@@ -166,6 +158,9 @@ public class QAToolController : MonoBehaviour
         LoadPlayersList();
     }
 
+    #endregion
+
+    #region Create Player Tab
     private void UpdateCreatePanel(PlayerProfile profile)
     {
         if (profile != null)
@@ -226,6 +221,45 @@ public class QAToolController : MonoBehaviour
         }
     }
 
+    private PlayerProfile GetDataToSave()
+    {
+        PlayerProfile profile = new PlayerProfile();
+        profile.PresetName = presetContainer.Q<TextField>("field-player-item").value;
+        profile.DisplayName = nameContainer.Q<TextField>("field-player-item").value;
+        profile.Level = int.Parse(levelContainer.Q<TextField>("field-player-item").value);
+        profile.Coins = int.Parse(coinsContainer.Q<TextField>("field-player-item").value);
+        profile.ABGroup = abgroupContainer.Q<TextField>("field-player-item").value;
+        profile.Items = ConvertRawItemsData(itemsPanel.text);
+
+        return profile;
+    }
+
+    private string[] ConvertRawItemsData(string items)
+    {
+        List<string> ret = itemsPanel.text.Split("-", System.StringSplitOptions.RemoveEmptyEntries).ToList();
+        return ret.ToArray();
+    }
+
+    private void CleanCreatePanel()
+    {
+        presetContainer.Q<TextField>("field-player-item").value = string.Empty;
+        nameContainer.Q<TextField>("field-player-item").value = string.Empty;
+        levelContainer.Q<TextField>("field-player-item").value = string.Empty;
+        coinsContainer.Q<TextField>("field-player-item").value = string.Empty;
+        abgroupContainer.Q<TextField>("field-player-item").value = string.Empty;
+        itemsPanel.text = string.Empty;
+    }
+    private void OnCloseItemButton(ClickEvent evt)
+    {
+        addItemsScrollView.parent.visible = false;
+    }
+
+    private void OnAddItemButton(ClickEvent evt)
+    {
+        addItemsScrollView.parent.visible = true;
+    }
+    #endregion
+
     #region Callbacks
     private void OnModifyPlayer(ClickEvent evt)
     {
@@ -269,13 +303,19 @@ public class QAToolController : MonoBehaviour
         EnablePlayerModify(!clickedFoldout.value);
     }
 
-    private void OnCreatePlayerTab(ChangeEvent<int> evt)
+    private void OnActiveTabChanged(Tab tab1, Tab tab2)
     {
         if(tabView.selectedTabIndex != createTab.tabIndex)
         {
             CleanCreatePanel();
             presetsScrollView.parent.visible = true;
-            currentPlayerSelected = null;
+
+            if(currentPlayerSelected != null)
+            {
+                playersFoldouts[currentPlayerSelected].value = false;
+                currentPlayerSelected = null;
+                EnablePlayerModify(false);
+            }
         }
     }
 
@@ -312,33 +352,4 @@ public class QAToolController : MonoBehaviour
     }
 
     #endregion
-
-    private PlayerProfile GetDataToSave()
-    {
-        PlayerProfile profile = new PlayerProfile();
-        profile.PresetName = presetContainer.Q<TextField>("field-player-item").value;
-        profile.DisplayName = nameContainer.Q<TextField>("field-player-item").value;
-        profile.Level = int.Parse(levelContainer.Q<TextField>("field-player-item").value);
-        profile.Coins = int.Parse(coinsContainer.Q<TextField>("field-player-item").value);
-        profile.ABGroup = abgroupContainer.Q<TextField>("field-player-item").value;
-        profile.Items = ConvertRawItemsData(itemsPanel.text);
-
-        return profile;
-    }
-
-    private string[] ConvertRawItemsData(string items)
-    {
-        List<string> ret = itemsPanel.text.Split("-", System.StringSplitOptions.RemoveEmptyEntries).ToList();
-        return ret.ToArray();
-    }
-
-    private void CleanCreatePanel()
-    {
-        presetContainer.Q<TextField>("field-player-item").value = string.Empty;
-        nameContainer.Q<TextField>("field-player-item").value = string.Empty;
-        levelContainer.Q<TextField>("field-player-item").value = string.Empty;
-        coinsContainer.Q<TextField>("field-player-item").value = string.Empty;
-        abgroupContainer.Q<TextField>("field-player-item").value = string.Empty;
-        itemsPanel.text = string.Empty;
-    }
 }

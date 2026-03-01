@@ -157,7 +157,8 @@ public class PlayersDataManagerTests
     {
         var profile = new PlayerProfile
         {
-            DisplayName = "", // invalid
+            // invalid
+            DisplayName = "", 
             PresetName = "",
             Level = -1,
             Coins = -10,

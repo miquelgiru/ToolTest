@@ -1,15 +1,15 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using ToolTest;
-using Unity.Services.Authentication;
 using UnityEngine;
-using UnityEngine.UIElements;
 
+
+/// <summary>
+/// Manages the players and players data
+/// </summary>
 public class PlayersDataManager : MonoBehaviour
 {
     private IToolTestService service;
@@ -43,6 +43,7 @@ public class PlayersDataManager : MonoBehaviour
         return info;
     }
 
+
     public async Task<bool> CreatePlayer(Dictionary<string, object> playerData)
     {
         string result = await service.CreatePlayer(playerData);
@@ -72,6 +73,11 @@ public class PlayersDataManager : MonoBehaviour
         return result;
     }
 
+    /// <summary>
+    /// Transforms raw data into manageable data
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
     private PlayerProfile ConvertRawDataIntoPlayerProfile(List<PlayerDataItem> data)
     {
         var playerInfo = new PlayerProfile();
@@ -136,8 +142,12 @@ public class PlayersDataManager : MonoBehaviour
             { "items", playerInfo.Items },
         };
 
-        if (!PlayerDataValidator.ValidateDictionary(savedData, out _))
+        string error = null;
+        if (!PlayerDataValidator.ValidatePlayerData(savedData, out error))
+        {
+            Debug.LogError($"Error saving data: {error}");
             return false;
+        }
 
         bool result = await service.SavePlayerData(playerId, savedData);
 
@@ -147,6 +157,10 @@ public class PlayersDataManager : MonoBehaviour
         return result;
     }
 
+    /// <summary>
+    /// Get all players data from service
+    /// </summary>
+    /// <returns>Collection of players and its data</returns>
     public async Task<Dictionary<string, PlayerProfile>> GetPlayersProfileData()
     {
         string[] palyerIds = await GetPlayersInfo();
