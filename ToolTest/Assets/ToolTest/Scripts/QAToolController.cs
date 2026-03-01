@@ -129,7 +129,7 @@ public class QAToolController : MonoBehaviour
 
                 if(i < playersStoredData[playerId].Items.Length - 1)
                 {
-                    lblItems.text += '-';
+                    lblItems.text += ' ';
                 }
             }
 
@@ -179,7 +179,7 @@ public class QAToolController : MonoBehaviour
 
                 if (i < profile.Items.Length - 1)
                 {
-                    itemsPanel.text += '-';
+                    itemsPanel.text += ' ';
                 }
             }
         }
@@ -213,7 +213,7 @@ public class QAToolController : MonoBehaviour
             {
                 if (itemsPanel.text != string.Empty)
                 {
-                    itemsPanel.text += '-';
+                    itemsPanel.text += ' ';
                 }
                 itemsPanel.text += btn.text;
                 addItemsScrollView.parent.visible = false;
