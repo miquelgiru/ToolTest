@@ -48,3 +48,20 @@ the Unity project.
 The second thig I would improve is the Tool itself. Add better visual, better display of the data and probably better usage design after some user testings and feedback.
 It would be great also if the presets were loaded from adressables for example and you can add them on runtime or create new presets.
 Finally, as I mentioned in the testing part, better tests and error messages inside the Tool not in the console errors.
+
+
+*AI usage*
+
+I have used ChatGPT and Claude. 
+- First to make the first approach to how I will develop the tool.
+- For the generation of tests.
+- For small questions abut UI Toolkit (Callback events).
+- To create the generic WebRequestClient.
+- And finally, to improve my classes looking for possible errors.
+
+*Documentation*
+
+I have used the unity documentation:
+- https://services.docs.unity.com/docs/service-account-auth/index.html
+- Player Authentication Admin API: https://services.docs.unity.com/player-auth-admin/v1/index.html#tag/Player-Authentication-Admin/operation/GetPlayer
+- CloudSave admin API: https://services.docs.unity.com/cloud-save-admin/v1/
